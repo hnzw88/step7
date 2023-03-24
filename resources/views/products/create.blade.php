@@ -11,7 +11,7 @@
         </div>
     </div>
 </div>
- 
+
 <div style="text-align:right;">
 <form method="POST" action="{{ route('store') }}" enctype="multipart/form-data">
     @csrf
@@ -21,6 +21,9 @@
             <div class="form-group">
                 <input type="text" name="product_name" class="form-control" placeholder="商品名">
             </div>
+            @error('product_name')
+            <span style="color:red;">商品名を入力してください</span>
+            @enderror
         </div>
         <div class="col-12 mb-2 mt-2">
             <div class="form-group">
@@ -31,16 +34,25 @@
                     @endforeach
                 </select>
             </div>
+            @error('company_id')
+            <span style="color:red;">メーカー名を選択してください</span>
+            @enderror
         </div>
         <div class="col-12 mb-2 mt-2">
             <div class="form-group">
                 <input type="text" name="price" class="form-control" placeholder="価格">
             </div>
+            @error('price')
+            <span style="color:red;">価格を入力してください</span>
+            @enderror
         </div>
         <div class="col-12 mb-2 mt-2">
             <div class="form-group">
                 <input type="text" name="stock" class="form-control" placeholder="在庫数">
             </div>
+            @error('stock')
+            <span style="color:red;">在庫数を入力してください</span>
+            @enderror
         </div>
         <div class="col-12 mb-2 mt-2">
             <div class="form-group">

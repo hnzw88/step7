@@ -21,8 +21,11 @@
         <div class="col-12 mb-2 mt-2">
         <div class="form-group" style="text-align:left">
             <label>【商品名】</label>              
-                <input type="text" name="product_name" value="{{ $product -> product_name }}" class="form-control" placeholder = "商品名">
+            <input type="text" name="product_name" value="{{ $product -> product_name }}" class="form-control" placeholder = "商品名">
         </div>
+        @error('product_name')
+        <span style="color:red;">商品名を入力してください</span>
+        @enderror
         </div>
         <div class="col-12 mb-2 mt-2">
             <div class="form-group" style="text-align:left">
@@ -34,18 +37,27 @@
                     @endforeach
                 </select>
             </div>
+            @error('company_id')
+            <span style="color:red;">メーカー名を選択してください</span>
+            @enderror
         </div>
         <div class="col-12 mb-2 mt-2">
             <div class="form-group" style="text-align:left">
             <label>【価　格】</label>              
                 <input type="text" name="price" value="{{ $product -> price }}" class="form-control" placeholder="価格">
             </div>
+            @error('price')
+            <span style="color:red;">価格を入力してください</span>
+            @enderror
         </div>
         <div class="col-12 mb-2 mt-2">
             <div class="form-group" style="text-align:left">
             <label>【在庫数】</label>              
                 <input type="text" name="stock" value="{{ $product -> stock }}" class="form-control" placeholder="在庫">
             </div>
+            @error('stock')
+            <span style="color:red;">在庫数を入力してください</span>
+            @enderror
         </div>
         <div class="col-12 mb-2 mt-2">
             <div class="form-group" style="text-align:left">
@@ -54,7 +66,8 @@
             </div>
         </div>
         <div class="form-group" style="text-align:left" >
-        <label>【商品画像】</label>              
+        <label>【商品画像】</label>
+          <img src="{{ asset('/storage/' . $product -> img_path) }}" class="img-fluid" alt="{{ $product -> img_path }}" width="200" height="200">                          
           <input type="file" class="form-control-file" name='image' id="image">
         </div>
 

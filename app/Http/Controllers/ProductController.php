@@ -60,15 +60,22 @@ class ProductController extends Controller
             $path = null;
         }
 
+        $request -> validate([
+        'product_name' => 'required|max:200',
+        'company_id' => 'required|integer',
+        'price' => 'required|integer',
+        'stock' => 'required|integer',
+        ]);
+
         \DB::beginTransaction();
         try {
             // 商品を登録
             Product::create([
-                'product_name' => $inputs['product_name'],
-                'company_id' => $inputs['company_id'],
-                'price' => $inputs['price'],
-                'stock' => $inputs['stock'],
-                'comment' => $inputs['comment'],
+                'product_name' => $request['product_name'],
+                'company_id' => $request['company_id'],
+                'price' => $request['price'],
+                'stock' => $request['stock'],
+                'comment' => $request['comment'],
                 'img_path' => $path[1],
             ]);
             \DB::commit();
@@ -128,14 +135,22 @@ class ProductController extends Controller
             $path = null;
         }
 
+        $request -> validate([
+            'product_name' => 'required|max:200',
+            'company_id' => 'required|integer',
+            'price' => 'required|integer',
+            'stock' => 'required|integer',
+            ]);
+    
+
         //商品情報を更新
-        $product = Product::find($inputs['id']);
+        $product = Product::find($request['id']);
         $product -> fill([
-            'product_name' => $inputs['product_name'],
-            'company_id' => $inputs['company_id'],
-            'price' => $inputs['price'],
-            'stock' => $inputs['stock'],
-            'comment' => $inputs['comment'],
+            'product_name' => $request['product_name'],
+            'company_id' => $request['company_id'],
+            'price' => $request['price'],
+            'stock' => $request['stock'],
+            'comment' => $request['comment'],
             'img_path' => $path[1],
         ]);
         $product -> save();

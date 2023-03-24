@@ -18,7 +18,7 @@
   </head>
   <body>
     <div class="container">
-    <h1 style="font-size:1.25rem;">管理システム</h1>
+    <h1 style="font-size:1.25rem;">商品管理システム</h1>
         @yield('content')
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
