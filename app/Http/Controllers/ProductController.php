@@ -22,9 +22,11 @@ class ProductController extends Controller
      */
     public function index()
     {
+        $company_model = new Company();
+        $companies = $company_model->getAll();
+
         //商品情報一覧画面表示
-        $products = Product::with('company') -> get();
-        $companies = Company::all();
+        $products = Product::with('company')->get();
         
         return view('products.index', ['products' => $products, 'companies' => $companies,]); 
     }
@@ -36,9 +38,11 @@ class ProductController extends Controller
      */
     public function create()
     {
-        $companies = Company::all();
+        $company_model = new Company();
+        $companies = $company_model->getAll();
+
         return view('products.create')
-        -> with('companies',$companies);
+        ->with('companies',$companies);
     }
 
     /**
@@ -49,35 +53,31 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $inputs = $request -> all();
-        $image = $request -> file('image');
+        $inputs = $request->all();
+        $image = $request->file('image');
         
         // 画像がアップロードされていれば、storageに保存
-        if($request -> hasFile('image')){
+        if($request->hasFile('image')){
             $path = \Storage::put('/public', $image);
             $path = explode('/', $path);
         }else{
             $path = null;
         }
+        $inputs['path'] = $path[1];
 
-        $request -> validate([
-        'product_name' => 'required|max:200',
-        'company_id' => 'required|integer',
-        'price' => 'required|integer',
-        'stock' => 'required|integer',
+        $request->validate([
+        'product_name'=>'required|max:200',
+        'company_id'=>'required|integer',
+        'price'=>'required|integer',
+        'stock'=>'required|integer',
         ]);
 
         \DB::beginTransaction();
         try {
             // 商品を登録
-            Product::create([
-                'product_name' => $request['product_name'],
-                'company_id' => $request['company_id'],
-                'price' => $request['price'],
-                'stock' => $request['stock'],
-                'comment' => $request['comment'],
-                'img_path' => $path[1],
-            ]);
+            $product_model = new Product();
+            $product_model->createProduct($inputs);
+
             \DB::commit();
         } catch (\Throwable $e) {
             \DB::rollback();
@@ -85,7 +85,7 @@ class ProductController extends Controller
         }
 
         return redirect() -> route('index')
-        -> with('flash_message','商品を登録しました');   
+        ->with('flash_message', config('const.message.create'));   
     }
 
     /**
@@ -96,10 +96,12 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        $companies = Company::all();
+        $company_model = new Company();
+        $companies = $company_model->getAll();
+
         return view('products.show', compact('product'))
-        -> with('page_id', request()->page_id)
-        -> with('companies', $companies);
+        ->with('page_id', request()->page_id)
+        ->with('companies', $companies);
     }
 
     /**
@@ -110,7 +112,9 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
-        $companies = Company::all();
+        $company_model = new Company();
+        $companies = $company_model->getAll();
+
         return view('products.edit', compact('product'))
         -> with('companies', $companies);
     }
@@ -124,8 +128,8 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
-        $inputs = $request -> all();
-        $image = $request -> file('image');
+        $inputs = $request->all();
+        $image = $request->file('image');
 
         // 画像がアップロードされていれば、storageに保存
         if ($request->hasFile('image')) {
@@ -134,6 +138,7 @@ class ProductController extends Controller
         } else {
             $path = null;
         }
+        $inputs['path'] = $path[1];
 
         $request -> validate([
             'product_name' => 'required|max:200',
@@ -144,20 +149,12 @@ class ProductController extends Controller
     
 
         //商品情報を更新
-        $product = Product::find($request['id']);
-        $product -> fill([
-            'product_name' => $request['product_name'],
-            'company_id' => $request['company_id'],
-            'price' => $request['price'],
-            'stock' => $request['stock'],
-            'comment' => $request['comment'],
-            'img_path' => $path[1],
-        ]);
-        $product -> save();
+        $product_model = new Product();
+        $product_model->updateProduct($inputs);
 
         DB::beginTransaction();
         try {
-            // 商品を登録
+            // 商品を更新
             $product = Product::find($inputs['id']);
             DB::commit();
         } catch (\Throwable $e) {
@@ -165,8 +162,8 @@ class ProductController extends Controller
             abort(500);
         }
 
-        return redirect() -> route('index')
-        -> with('flash_message','商品を更新しました');   
+        return redirect()->route('index')
+        ->with('flash_message',config('const.message.update'));   
     }
 
     /**
@@ -177,35 +174,36 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        $product -> delete();
-        return redirect() -> route('index')
-        -> with('flash_message','商品を削除しました');   
+        $product->delete();
+        return redirect()->route('index')
+        ->with('flash_message',config('const.message.destroy'));   
     }
 
 
     //検索機能
     public function search(Request $request) 
     {
-        $companies = Company::all();
+        $company_model = new Company();
+        $companies = $company_model->getAll();
 
         //入力される値nameの定義
-        $keyword = $request -> input('keyword'); //商品名
-        $company_name = $request -> input('company_name'); //メーカー名
+        $keyword = $request->input('keyword'); //商品名
+        $company_name = $request->input('company_name'); //メーカー名
 
         //queryビルダ
         $query = Product::query();
 
         //キーワード検索機能
         if (!empty($keyword)) {
-            $query -> where('product_name', 'LIKE', "%{$keyword}%");
+            $query->where('product_name', 'LIKE', "%{$keyword}%");
         }
 
         //プルダウン検索機能
         if (isset($company_name)) {
-            $query -> where('company_id', $company_name);
+            $query->where('company_id', $company_name);
         }
 
-        $products = $query -> get();
+        $products = $query->get();
 
         return view('products.index', ['companies' => $companies], compact('products', 'keyword', 'company_name'),);
     }

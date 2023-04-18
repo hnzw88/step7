@@ -20,7 +20,10 @@ class Company extends Model
          'representative_name'
      ];
  
-     
+     public function getAll(){
+        $companies = Company::all();
+        return $companies;
+    }
  
      // Productsテーブルと関連付ける
      public function products(){
