@@ -194,14 +194,12 @@ class ProductController extends Controller
         $query = Product::query();
 
         //キーワード検索機能
-        if (!empty($keyword)) {
-            $query->where('product_name', 'LIKE', "%{$keyword}%");
-        }
+        $product_model = new Product();
+        $product_model->searchProduct($keyword, $query);
 
         //プルダウン検索機能
-        if (isset($company_name)) {
-            $query->where('company_id', $company_name);
-        }
+        $product_model = new Product();
+        $product_model->searchCompany($company_name, $query);
 
         $products = $query->get();
 

@@ -45,6 +45,18 @@ class Product extends Model
         $product->save();
     }
 
+    public function searchProduct($keyword, $query){
+        if (!empty($keyword)) {
+            $query->where('product_name', 'LIKE', "%{$keyword}%");
+        }
+    }
+
+    public function searchCompany($company_name, $query){
+        if (isset($company_name)) {
+            $query->where('company_id', $company_name);
+        }
+    }
+
     // Companiesテーブルと関連付ける
     public function company(){
         return $this->belongsTo('App\Models\Company');
