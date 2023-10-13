@@ -1,6 +1,8 @@
 @extends('app')
   
 @section('content')
+    <script src="{{ asset('/js/index.js') }}"></script>
+
     <div class="row">
         <div class="col-lg-12">
             <div class="text-left">
@@ -25,7 +27,7 @@
     <div class="row">
         <!-- 検索バー -->
         <div class="col-sm">
-            <form method="GET" action="{{route('search')}}">
+            <form method="GET" action="{{route('search')}}" id="search_form">
                 <div class="form-group row">
                     <label class="col-sm-2 col-form-label">商品名</label>
                     <!--入力-->
@@ -41,12 +43,16 @@
                     <label class="col-sm-2">メーカー名</label>
                     <div class="col-sm-3">
                         <select name="company_name" class="form-control" value="">
-                            <option value="">未選択</option>
+                            <option value="" hidden selected>未選択</option>
 
                             @foreach($companies as $company)
                             <option value="{{ $company -> id }}">{{ $company -> company_name }}</option>
                             @endforeach
                         </select>
+                        <input type="text" name="max_price" id="max_price" placeholder="価格の上限を入力">
+                        <input type="text" name="min_price" id="min_price" placeholder="価格の下限を入力">
+                        <input type="text" name="max_stock" id="max_stock" placeholder="在庫の上限を入力">
+                        <input type="text" name="min_stock" id="min_stock" placeholder="在庫の下限を入力">
                     </div>
                 </div>
             </form>
@@ -57,7 +63,7 @@
        <a class="btn btn-success" onclick="location.href='/products/create'">新規登録</a>
     </div>
 
-    <table class="table table-bordered">
+    <table class="table table-bordered" id="product_table">
         <tr>
             <th>id</th>
             <th>商品画像</th>
@@ -65,6 +71,8 @@
             <th>価格</th>
             <th>在庫数</th>
             <th>メーカー名</th>
+            <th></th>
+            <th></th>
 
         </tr>
         @foreach ($products as $product)
@@ -82,7 +90,7 @@
             <form action="{{ route('destroy',$product->id) }}" method="POST">
             @csrf
             @method('DELETE')
-            <button type="submit" class="btn btn-sm btn-danger" onclick='return confirm("削除しますか？");'>削除</button>
+            <button type="submit" class="btn btn-sm btn-danger" id="delete_btn" onclick='return confirm("削除しますか？");'>削除</button>
             </form>
             </td>
         </tr>
