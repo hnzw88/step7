@@ -1,6 +1,10 @@
 @extends('app')
   
 @section('content')
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
+     <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
     <script src="{{ asset('/js/index.js') }}"></script>
 
     <div class="row">
@@ -13,7 +17,6 @@
 
      <!-- フラッシュメッセージ -->
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
      <script>
@@ -87,10 +90,8 @@
             <a class="btn btn-primary" href="{{ route('show',$product->id) }}">詳細</a>
             </td>
             <td style=”text-align:center”>
-            <form action="{{ route('destroy',$product->id) }}" method="POST">
-            @csrf
-            @method('DELETE')
-            <button type="submit" class="btn btn-sm btn-danger" id="delete_btn" onclick='return confirm("削除しますか？");'>削除</button>
+            <form  class="id">
+            <input data-delete_btn="{{ $product-> id }}" type="submit" class="btn-danger btn-dell" value="削除">
             </form>
             </td>
         </tr>

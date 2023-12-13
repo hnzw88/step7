@@ -42,7 +42,7 @@ Route::get('/products/edit/{product}', 'App\Http\Controllers\ProductController@e
 Route::post('/products/update','App\Http\Controllers\ProductController@update') -> name('update');
 
 //削除
-Route::delete('/products/{product}','App\Http\Controllers\ProductController@destroy') -> name('destroy');
+Route::post('/products/delete/{product}','App\Http\Controllers\ProductController@destroy') -> name('destroy');
 
 //検索機能
 Route::get('/search', 'App\Http\Controllers\ProductController@search') -> name('search');

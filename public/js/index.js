@@ -29,3 +29,37 @@ $(function() {
 });
 
 //非同期削除処理
+$(function() {
+    $('.btn-danger').on('click',function() {
+        var deleteConfirm = confirm('削除してよろしいでしょうか？');
+        
+          if (deleteConfirm == true) {
+            var clickEle = $(this)
+            var userID = clickEle.attr('data-delete_btn');
+
+          $.ajax({
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+            url: 'destroy',
+            type: 'POST',
+            data: {
+                'id': userID,
+            },
+            dataType: 'Json',
+          })
+
+          .done(function() {
+            // 通信が成功した場合、クリックした要素の親要素の <tr> を削除
+            clickEle.parents('tr').remove();
+          })
+    
+         .fail(function() {
+            alert('エラー');
+          });
+    
+        } else {
+          (function(e) {
+            e.preventDefault()
+          });
+        };
+      });
+    });

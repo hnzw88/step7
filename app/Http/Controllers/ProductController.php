@@ -172,11 +172,12 @@ class ProductController extends Controller
      * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Product $product)
-    {
-        $product->delete();
-        return redirect()->route('index')
-        ->with('flash_message',config('const.message.destroy'));   
+    public function destroy(Requset $request)
+    { 
+        // $product = User::findOrFail($request->id);
+        // $product->delete();
+        $product -> destroy($request->id);
+        return response()->json(['result'=> '成功']);
     }
 
 
