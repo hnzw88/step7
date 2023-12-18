@@ -30,7 +30,8 @@ $(function() {
 
 //非同期削除処理
 $(function() {
-    $('.btn-danger').on('click',function() {
+    $('.btn-danger').on('click',function(e) {
+      e.preventDefault()
         var deleteConfirm = confirm('削除してよろしいでしょうか？');
         
           if (deleteConfirm == true) {
@@ -39,15 +40,15 @@ $(function() {
 
           $.ajax({
             headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-            url: 'destroy',
+            url: 'destroyproduct/'+userID,
             type: 'POST',
             data: {
-                'id': userID,
+                'id':userID,
             },
-            dataType: 'Json',
           })
 
           .done(function() {
+            console.log('成功')
             // 通信が成功した場合、クリックした要素の親要素の <tr> を削除
             clickEle.parents('tr').remove();
           })
