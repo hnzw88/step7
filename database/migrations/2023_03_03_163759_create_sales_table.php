@@ -15,8 +15,11 @@ class CreateSalesTable extends Migration
     {
         Schema::create('sales', function (Blueprint $table) {
             $table -> id();
-            $table -> integer('product_id');
+            $table -> unsignedBigInteger('product_id');
             $table -> timestamps();
+
+            // 外部キー制約を追加
+            $table->foreign('product_id')->references('id')->on('products');
         });
     }
 

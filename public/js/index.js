@@ -1,22 +1,23 @@
 //非同期検索処理
 $(function() {
-    $('#seach_form').on('submit',function(e){
+  console.log('読み込みOK')
+    $('#search-btn').on('click',function(e){
         e.preventDefault();
         const form = $(this);
-
+console.log('検索ボタン')
         $.ajax({
             headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
             url: '/search',
             method: 'GET',
             data: {
                 keyword: $('#search_keyword').val(),
-                company_id: $('#company_id').val(),
+                company_id: $('#search_company').val(),
                 max_price: $('#max_price').val(),
                 min_price: $('#min_price').val(),
                 max_stock: $('#max_stock').val(),
                 min_stock: $('#min_stock').val(),
             },
-
+dataType:'html',
             success: function(data) {
                 let new_table = $(data).find('#product_table');
                 $('#product_table').html(new_table);

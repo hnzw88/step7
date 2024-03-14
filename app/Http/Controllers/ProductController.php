@@ -180,30 +180,53 @@ class ProductController extends Controller
         // return response()->json(['result'=> '成功']);
     }
 
-
     //検索機能
     public function search(Request $request) 
     {
-        $company_model = new Company();
-        $companies = $company_model->getAll();
+            $company_model = new Company();
+            $companies = $company_model->getAll();
+        
+            $keyword = $request->input('keyword');
+            $company_name = $request->input('company_id');
+            $max_price = $request->input('max_price');
+            $min_price = $request->input('min_price');
+            $max_stock = $request->input('max_stock');
+            $min_stock = $request->input('min_stock');
+        
+            $query = Product::query();
+        
+            $product_model = new Product();
+            // $product_model->searchProduct($keyword, $query);
+            // $product_model->searchCompany($company_name, $query);
 
-        //入力される値nameの定義
-        $keyword = $request->input('keyword'); //商品名
-        $company_name = $request->input('company_name'); //メーカー名
+            if (!empty($keyword)) {
+                $query->where('product_name', 'LIKE', "%{$keyword}%");
+            }    
 
-        //queryビルダ
-        $query = Product::query();
-
-        //キーワード検索機能
-        $product_model = new Product();
-        $product_model->searchProduct($keyword, $query);
-
-        //プルダウン検索機能
-        $product_model = new Product();
-        $product_model->searchCompany($company_name, $query);
-
-        $products = $query->get();
-
-        return view('products.index', ['companies' => $companies], compact('products', 'keyword', 'company_name'),);
-    }
+            if (isset($company_name)) {
+                $query->where('company_id', $company_name);
+            }    
+        
+            // 上限価格の条件追加
+            if ($max_price) {
+                $query->where('price', '<=', $max_price);
+            }
+        
+            // 下限価格の条件追加
+            if ($min_price) {
+                $query->where('price', '>=', $min_price);
+            }
+        
+            if($max_stock){
+                $query->where('stock','<=',$max_stock);
+            }
+        
+            if($min_stock){
+                $query->where('stock','>=',$min_stock);
+            }
+        
+            $products = $query->get();
+        
+            return view('products.index', compact('companies', 'products', 'keyword', 'company_name', 'max_price', 'min_price'));
+        }
 }

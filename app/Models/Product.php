@@ -45,6 +45,7 @@ class Product extends Model
         $product->save();
     }
 
+    //検索機能
     public function searchProduct($keyword, $query){
         if (!empty($keyword)) {
             $query->where('product_name', 'LIKE', "%{$keyword}%");
