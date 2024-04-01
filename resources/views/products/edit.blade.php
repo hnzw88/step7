@@ -13,7 +13,7 @@
 </div>
  
 <div style="text-align:right;">
- <form method="POST" action="{{ route('update'), $product -> id }}" enctype="multipart/form-data">
+ <form method="POST" action="{{ route('update') }}" enctype="multipart/form-data">
     @csrf
     <input type="hidden" name="id" value="{{ $product -> id }}">
         
@@ -67,7 +67,7 @@
         </div>
         <div class="form-group" style="text-align:left" >
         <label>【商品画像】</label>
-          <img src="{{ asset('/storage/' . $product -> img_path) }}" class="img-fluid" alt="{{ $product -> img_path }}" width="200" height="200">                          
+          <img src="{{ asset($product->img_path) }}" class="img-fluid" alt="{{ $product -> img_path }}" width="200" height="200">                          
           <input type="file" class="form-control-file" name='image' id="image">
         </div>
 

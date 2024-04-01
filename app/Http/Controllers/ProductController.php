@@ -53,39 +53,28 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $inputs = $request->all();
-        $image = $request->file('image');
-        
-        // 画像がアップロードされていれば、storageに保存
-        if($request->hasFile('image')){
-            $path = \Storage::put('/public', $image);
-            $path = explode('/', $path);
-        }else{
-            $path = null;
-        }
-        $inputs['path'] = $path[1];
+        $model = NEW product;
+        DB::beginTransaction();
+        try{
+            $image = $request->file('image');
+            if($image){
+                $filename = $image->getClientOriginalName();
+                $image->storeAs('public/images', $filename);
+                $img_path = 'storage/images/'.$filename;
+            }else{
+                $img_path = null;
+            }
 
-        $request->validate([
-        'product_name'=>'required|max:200',
-        'company_id'=>'required|integer',
-        'price'=>'required|integer',
-        'stock'=>'required|integer',
-        ]);
+            $companies = DB::table('companies')->get();
 
-        \DB::beginTransaction();
-        try {
-            // 商品を登録
-            $product_model = new Product();
-            $product_model->createProduct($inputs);
+            $products = $model->createProduct($request, $img_path);
 
-            \DB::commit();
-        } catch (\Throwable $e) {
-            \DB::rollback();
-            abort(500);
-        }
-
-        return redirect() -> route('index')
-        ->with('flash_message', config('const.message.create'));   
+            DB::commit();
+            return redirect() -> route('index')
+            ->with('flash_message', config('const.message.create'));   
+         }catch(Exception $e) {
+            DB::rollBack();
+         }
     }
 
     /**
@@ -126,45 +115,28 @@ class ProductController extends Controller
      * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Product $product)
+    public function update(Request $request)
     {
-        $inputs = $request->all();
-        $image = $request->file('image');
-
-        // 画像がアップロードされていれば、storageに保存
-        if ($request->hasFile('image')) {
-            $path = \Storage::put('/public', $image);
-            $path = explode('/', $path);
-        } else {
-            $path = null;
-        }
-        $inputs['path'] = $path[1];
-
-        $request -> validate([
-            'product_name' => 'required|max:200',
-            'company_id' => 'required|integer',
-            'price' => 'required|integer',
-            'stock' => 'required|integer',
-            ]);
-    
-
-        //商品情報を更新
-        $product_model = new Product();
-
+        $id=$request->input('id');
+        $model = New product;
         DB::beginTransaction();
-        try {
-            $product_model->updateProduct($inputs);
+        try{
+            $image = $request->file('image');
+            if($image){
+                $filename = $image->getClientOriginalName();
+                $image->storeAs('public/images', $filename);
+                $img_path = 'storage/images/'.$filename;
+                $model->updateProduct($request, $img_path, $id);
+            }else{
+                $model->updateProductNoImg($request, $id);
+            }
 
-            // 商品を更新
-            $product = Product::find($inputs['id']);
             DB::commit();
-        } catch (\Throwable $e) {
-            DB::rollback();
-            abort(500);
-        }
-
-        return redirect()->route('index')
-        ->with('flash_message',config('const.message.update'));   
+            return redirect() -> route('index')
+            ->with('flash_message', config('const.message.update'));   
+         }catch(Exception $e) {
+            DB::rollBack();
+         }
     }
 
     /**
@@ -198,36 +170,6 @@ class ProductController extends Controller
         
             $product_model = new Product();
             $products = $product_model->searchProduct($keyword, $company_name, $max_price, $min_price, $max_stock, $min_stock);
-            // $product_model->searchCompany($company_name, $query);
-
-            // if (!empty($keyword)) {
-            //     $query->where('product_name', 'LIKE', "%{$keyword}%");
-            // }    
-
-            // if (isset($company_name)) {
-            //     $query->where('company_id', $company_name);
-            // }    
-        
-            // // 上限価格の条件追加
-            // if ($max_price) {
-            //     $query->where('price', '<=', $max_price);
-            // }
-        
-            // // 下限価格の条件追加
-            // if ($min_price) {
-            //     $query->where('price', '>=', $min_price);
-            // }
-        
-            // if($max_stock){
-            //     $query->where('stock','<=',$max_stock);
-            // }
-        
-            // if($min_stock){
-            //     $query->where('stock','>=',$min_stock);
-            // }
-        
-            // $products = $query->get();
-        
             return view('products.index', compact('companies', 'products', 'keyword', 'company_name', 'max_price', 'min_price'));
         }
 }

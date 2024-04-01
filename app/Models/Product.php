@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Product extends Model
 {
@@ -21,28 +22,42 @@ class Product extends Model
         'img_path',
     ];
 
-    public function createProduct($inputs){
-        $products = Product::create([
-            'product_name'=>$inputs['product_name'],
-            'company_id'=>$inputs['company_id'],
-            'price'=>$inputs['price'],
-            'stock'=>$inputs['stock'],
-            'comment'=>$inputs['comment'],
-            'img_path'=>$inputs['path'],
+    public function createProduct($request, $img_path){
+        DB::table('products')->insert([
+            'product_name'=>$request->input('product_name'),
+            'company_id'=>$request->input('company_id'),
+            'price'=>$request->input('price'),
+            'stock'=>$request->input('stock'),
+            'comment'=>$request->input('comment'),
+            'img_path'=>$img_path
         ]);
     }
 
-    public function updateProduct($inputs){
-        $product = Product::find($inputs['id']);
-        $product->fill([
-            'product_name'=>$inputs['product_name'],
-            'company_id'=>$inputs['company_id'],
-            'price'=>$inputs['price'],
-            'stock'=>$inputs['stock'],
-            'comment'=>$inputs['comment'],
-            'img_path'=>$inputs['path'],
+    //更新処理(画像あり)
+    public function updateProduct($request, $img_path, $id){
+        DB::table('products')
+        ->where('products.id', '=', $id)
+        ->update([
+            'product_name'=>$request->input('product_name'),
+            'company_id'=>$request->input('company_id'),
+            'price'=>$request->input('price'),
+            'stock'=>$request->input('stock'),
+            'comment'=>$request->input('comment'),
+            'img_path'=>$img_path
         ]);
-        $product->save();
+    }
+
+    //更新処理(画像なし)
+    public function updateProductNoImg($request, $id){
+        DB::table('products')
+        ->where('products.id', '=', $id)
+        ->update([
+            'product_name'=>$request->input('product_name'),
+            'company_id'=>$request->input('company_id'),
+            'price'=>$request->input('price'),
+            'stock'=>$request->input('stock'),
+            'comment'=>$request->input('comment'),
+        ]);
     }
 
     //検索機能
@@ -80,11 +95,6 @@ class Product extends Model
             return $products;    
         }
 
-    // public function searchCompany($company_name, $query){
-    //     if (isset($company_name)) {
-    //         $query->where('company_id', $company_name);
-    //     }
-    // }
 
     // Companiesテーブルと関連付ける
     public function company(){

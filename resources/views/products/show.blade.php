@@ -22,7 +22,7 @@
     <div class="col-12 mb-2 mt-2">
         <div class="form-group">
         <label>【商品画像】</label>
-        <img src="{{ asset('/storage/' . $product -> img_path) }}" class="img-fluid" alt="{{ $product -> img_path }}" width="200" height="200">            
+        <img src="{{ asset($product->img_path) }}" class="img-fluid" alt="{{ $product -> img_path }}" width="200" height="200">            
         </div>
     </div>
     <div class="col-12 mb-2 mt-2">

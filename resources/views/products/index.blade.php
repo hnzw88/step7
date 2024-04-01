@@ -108,7 +108,7 @@
         @foreach ($products as $key=>$product)
         <tr>
             <td style="text-align:right">{{ $key+1 }}</td>
-            <td style="text-align:left mr-2"><img src="{{ Storage::url($product -> img_path) }}" width="25%"></td>
+            <td style="text-align:left mr-2"><img src="{{ asset($product->img_path) }}" width="25%"></td>
             <td>{{ $product -> product_name }}</td>
             <td style="text-align:right">{{ $product -> price }}円</td>
             <td style="text-align:right">{{ $product -> stock }}</td>
@@ -126,3 +126,5 @@
       </tbody>
     </table>
 @endsection
+
+<!--Storage::url($product -> img_path)-->
