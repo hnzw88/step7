@@ -116,5 +116,3 @@
     </table>
     </div>
 @endsection
-
-<!--Storage::url($product -> img_path)-->
