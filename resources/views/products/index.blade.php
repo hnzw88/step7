@@ -20,18 +20,6 @@
     }
     </style>
 
-    <script>
-    $(document).ready(function() {
-        $('#product_table').tablesorter({
-            headers: {
-               1: { sorter: false },
-               6: { sorter: false },
-               7: { sorter: false }
-            }
-            });
-    });
-    </script>
-
     <div class="row">
         <div class="col-lg-12">
             <div class="text-left">
@@ -90,7 +78,8 @@
     <div class="text-left">
        <a class="btn btn-success" onclick="location.href='/products/create'">新規登録</a>
     </div>
-    
+
+    <div id='tablearea'>
     <table class="table table-bordered" id="product_table">
       <thead>
         <tr>
@@ -125,6 +114,7 @@
         @endforeach
       </tbody>
     </table>
+    </div>
 @endsection
 
 <!--Storage::url($product -> img_path)-->
